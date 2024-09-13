@@ -8,6 +8,7 @@ require("dotenv").config();
 app.use(express.json());
 app.use(cors());
 
+
 // Replace <db_username> and <db_password> with your actual MongoDB credentials
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.t0p010p.mongodb.net/kiddle?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -25,6 +26,29 @@ async function run() {
     
     await client.connect();
     const userCollection = client. db('kiddle').collection('user');
+    const toyCollection = client.db('kiddle').collection('alltoys');
+    const categoryCollection = client.db('kiddle').collection('category');
+    const addToyCollection = client.db('kiddle').collection('toy');
+
+    app.get('/alltoys', async(req, res) =>{
+      const cursor = toyCollection.find();
+      const alltoys = await cursor.toArray();
+      res.send(alltoys);
+    })
+
+    app.get('/category', async(req, res) =>{
+      const cursor = categoryCollection.find();
+      const category = await cursor.toArray();
+      res.send(category);
+    })
+
+    // app.get('/toy', async(req, res) =>{
+    //   const cursor = addToyCollection.find();
+    //   const category = await cursor.toArray();
+    //   res.send(category);
+    // })
+
+  
 
     //user related apis
     app.post('/user', async(req,res) => {
@@ -33,6 +57,15 @@ async function run() {
         const result = await userCollection.insertOne(user);
         res.send(result);
     })
+
+    app.post('/toy', async (req, res) => {
+      const newToy = req.body;
+      console.log(newToy);
+      const result = await addToyCollection.insertOne(newToy);
+      res.send(result);
+    });
+    
+      
 
 
     await client.db("admin").command({ ping: 1 });
