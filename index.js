@@ -42,11 +42,11 @@ async function run() {
       res.send(category);
     })
 
-    // app.get('/toy', async(req, res) =>{
-    //   const cursor = addToyCollection.find();
-    //   const category = await cursor.toArray();
-    //   res.send(category);
-    // })
+    app.get('/toy', async(req, res) =>{
+      const cursor = addToyCollection.find();
+      const category = await cursor.toArray();
+      res.send(category);
+    })
 
   
 
