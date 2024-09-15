@@ -70,21 +70,28 @@ async function run() {
       res.send(result);
     });
 
-    // // update
-    // app.patch('/updateToy/:id', async(req, res)=>{
-    //   const id = req.params.id
-    //   const filter = { _id: new ObjectId(id)}
-    //   const data = req.body;
-    //   const option= {upsert:true};
-    //   const updateDoc = {
-    //     $set: {
-    //     status : data.status
-    //     },
-    //   };
-    // console.log(data)
-    // const result = await toyCollection.updateOne(filter,updateDoc,option )
-    // res.send(result)
-    // })
+    // Update toy information
+app.patch('/updateToy/:id', async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: new ObjectId(id) }; // Filter to find the toy by ID
+  const data = req.body; // Data sent from the client
+  const option = { upsert: true }; // Option to create a new document if it doesn't exist
+
+  // Fields to update in the toy document
+  const updateToy = {
+    $set: {
+      price: data.price,
+      availableQuantity: data.availableQuantity,
+      detailDescription: data.detailDescription,
+      status: data.status, // If status field is included
+    },
+  };
+
+  console.log(data); 
+  const result = await toyCollection.updateOne(filter, updateToy, option);
+  res.send(result);
+});
+
 
     //user related apis
     app.post("/user", async (req, res) => {
