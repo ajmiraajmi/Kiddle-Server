@@ -55,12 +55,13 @@ async function run() {
 
     //  search toyCollection
 
-    //   app.get('/search', async (req, res) => {
-    //     const toyName = req.query.toyName;
-    //     const query = { toyName: toyName };
-    //     const result = await addToyCollection.find(query).toArray();
-    //     res.send(result);
-    // });
+    app.get("/search", async (req, res) => {
+      const toyName = req.query.name;
+      console.log(toyName);
+      const query = { $or: [{ name: { $regex: toyName, $options: "i" } }] };
+      const result = await addToyCollection.find(query).toArray();
+      res.send(result);
+    });
 
     // deelete
     app.delete("/toy/:id", async (req, res) => {
@@ -71,27 +72,26 @@ async function run() {
     });
 
     // Update toy information
-app.patch('/updateToy/:id', async (req, res) => {
-  const id = req.params.id;
-  const filter = { _id: new ObjectId(id) }; // Filter to find the toy by ID
-  const data = req.body; // Data sent from the client
-  const option = { upsert: true }; // Option to create a new document if it doesn't exist
+    app.patch("/toy/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const data = req.body;
 
-  // Fields to update in the toy document
-  const updateToy = {
-    $set: {
-      price: data.price,
-      availableQuantity: data.availableQuantity,
-      detailDescription: data.detailDescription,
-      status: data.status, // If status field is included
-    },
-  };
-
-  console.log(data); 
-  const result = await toyCollection.updateOne(filter, updateToy, option);
-  res.send(result);
-});
-
+      const updateToy = {
+        $set: {
+          price: data.price,
+          quantity: data.quantity,
+          description: data.description,
+        },
+      };
+      const result = await addToyCollection.updateOne(
+        filter,
+        updateToy,
+        options
+      );
+      res.send(result);
+    });
 
     //user related apis
     app.post("/user", async (req, res) => {
