@@ -63,6 +63,14 @@ async function run() {
       res.send(result);
     });
 
+    // sorting
+
+    app.get('/toys', async (req, res) => res.status(200).
+    json(await Toy.find().sort({ price: req.query.sortBy === 'desc' ? -1 : 1 })));
+
+    
+
+
     // deelete
     app.delete("/toy/:id", async (req, res) => {
       const id = req.params.id;
