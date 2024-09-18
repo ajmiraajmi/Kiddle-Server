@@ -24,21 +24,11 @@ async function run() {
   try {
     await client.connect();
     const userCollection = client.db("kiddle").collection("user");
-    const toyCollection = client.db("kiddle").collection("alltoys");
-    const categoryCollection = client.db("kiddle").collection("category");
+    // const toyCollection = client.db("kiddle").collection("alltoys");
+    // const categoryCollection = client.db("kiddle").collection("category");
     const addToyCollection = client.db("kiddle").collection("toy");
 
-    app.get("/alltoys", async (req, res) => {
-      const cursor = toyCollection.find();
-      const alltoys = await cursor.toArray();
-      res.send(alltoys);
-    });
-
-    app.get("/category", async (req, res) => {
-      const cursor = categoryCollection.find();
-      const category = await cursor.toArray();
-      res.send(category);
-    });
+   
 
     app.get("/toy", async (req, res) => {
       const cursor = addToyCollection.find();
@@ -53,6 +43,25 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/toys/:email", async (req, res) => {
+      const { email } = req.params; 
+      console.log("Fetching toys for email:", email); 
+    
+      try {
+        const query = { userEmail: email };
+        const result = await addToyCollection.find(query).toArray();
+        if (result.length === 0) {
+          return res.status(404).send({ message: "No toys found for this user." });
+        }
+        res.send(result);
+      } catch (error) {
+        console.error("Error fetching toys:", error); 
+        res.status(500).send({ error: "Failed to fetch toys" });
+      }
+    });
+    
+
+
     //  search toyCollection
 
     app.get("/search", async (req, res) => {
@@ -62,6 +71,14 @@ async function run() {
       const result = await addToyCollection.find(query).toArray();
       res.send(result);
     });
+
+    app.get("/user", async (req, res) => {
+      const cursor = userCollection.find();
+      const category = await cursor.toArray();
+      res.send(category);
+    });
+
+
 
     // sorting
 
